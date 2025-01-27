@@ -1,16 +1,12 @@
-package org.hiero.sample;
+package org.hiero.sample.service;
 
 import com.hedera.hashgraph.sdk.ContractId;
-import com.hedera.hashgraph.sdk.Hbar;
 import com.openelements.hiero.base.AccountClient;
 import com.openelements.hiero.base.HieroException;
 import com.openelements.hiero.base.SmartContractClient;
 import com.openelements.hiero.base.data.Bytes;
 import com.openelements.hiero.base.data.ContractParam;
-import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.UUID;
@@ -55,50 +51,6 @@ public class SupplierTask {
             smartContractClient.callContractFunction(contractId, "addHash", identifierParam, hashParam);
         } catch (HieroException e) {
             log.error("Failed to upload new item", e);
-        }
-    }
-
-    @Scheduled(fixedRate = 10_000)
-    @Async
-    public void printCurrentState() {
-        try {
-            final BigInteger getMissingVerificationCount = smartContractClient.callContractFunction(contractId,
-                    "getMissingVerificationCount").getInt256(0);
-            log.info("Missing {} Identifiers", getMissingVerificationCount);
-        } catch (HieroException e) {
-            log.error("Failed to get missing verification count", e);
-        }
-    }
-
-    @Scheduled(fixedRate = 2_000)
-    @Async
-    public void printAvailableHBar() {
-        try {
-            final Hbar operatorAccountBalance = accountClient.getOperatorAccountBalance();
-            log.info("Operator Account Balance: {}", operatorAccountBalance);
-        } catch (HieroException e) {
-            log.error("Failed to get missing verification count", e);
-        }
-    }
-
-    private LocalDateTime getSupplyTimestamp(String identifier) {
-        try {
-            long timestamp = smartContractClient.callContractFunction(contractId, "getSupplyTimestamp",
-                    ContractParam.string(identifier)).getInt256(0).longValue();
-            final Instant instant = Instant.ofEpochSecond(timestamp);
-            return LocalDateTime.ofInstant(instant, ZONE_ID_OF_NETWORK);
-        } catch (HieroException e) {
-            throw new RuntimeException("Failed to get supply timestamp", e);
-        }
-    }
-
-    private String getMissingVerificationIdentifier(int index) {
-        try {
-            return smartContractClient.callContractFunction(contractId,
-                    "getMissingVerificationIdentifier",
-                    ContractParam.int256(BigInteger.valueOf(index))).getString(0);
-        } catch (HieroException e) {
-            throw new RuntimeException("Failed to get missing verification identifier", e);
         }
     }
 

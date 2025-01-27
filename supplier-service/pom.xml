@@ -41,6 +41,33 @@
       <artifactId>slf4j-simple</artifactId>
       <version>2.0.13</version>
     </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-core</artifactId>
+      <version>24.6.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-spring-boot-starter</artifactId>
+      <version>24.6.2</version>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-maven-plugin</artifactId>
+        <version>24.6.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-frontend</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

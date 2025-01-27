@@ -2,3 +2,4 @@ smart-contract/target/**
 .idea
 .env
 /supplier-service/target/**
+/supplier-service/src/main/frontend/generated/**
