@@ -5,6 +5,8 @@ import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import org.hiero.sample.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MainView extends VerticalLayout implements Runnable {
 
     private final TextField balanceText;
+
+    private final TextField totalTransactionText;
 
     private final TextField missingVerificationCountText;
 
@@ -28,11 +32,15 @@ public class MainView extends VerticalLayout implements Runnable {
         balanceText.setLabel("Account Balance");
         balanceText.setEnabled(false);
 
+        totalTransactionText = new TextField("-");
+        totalTransactionText.setLabel("Total Transaction Count");
+        totalTransactionText.setEnabled(false);
+
         missingVerificationCountText = new TextField("-");
         missingVerificationCountText.setLabel("Missing Verification Count");
         missingVerificationCountText.setEnabled(false);
 
-        add(balanceText, missingVerificationCountText);
+        add(balanceText, totalTransactionText, missingVerificationCountText);
     }
 
     @Override
@@ -47,11 +55,14 @@ public class MainView extends VerticalLayout implements Runnable {
 
     @Override
     public void run() {
-        final String balance = supplierService.getAccountBalance().toString();
-        final String missingVerificationCount = supplierService.getMissingVerificationCount().toString();
+        final BigDecimal balance = supplierService.getAccountBalance();
+        final BigInteger missingVerificationCount = supplierService.getMissingVerificationCount();
+        final BigInteger totalCount = supplierService.getTotalCount();
+        final long transactionCount = supplierService.getCallCount();
         getUI().ifPresent(ui -> ui.access(() -> {
-            balanceText.setValue(balance);
-            missingVerificationCountText.setValue(missingVerificationCount);
+            balanceText.setValue(balance + " HBAR");
+            missingVerificationCountText.setValue(missingVerificationCount + " / " + totalCount);
+            totalTransactionText.setValue(String.valueOf(transactionCount));
         }));
     }
 }
