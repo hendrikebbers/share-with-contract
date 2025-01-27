@@ -1,3 +1,4 @@
 smart-contract/target/**
 .idea
 .env
+/supplier-service/target/**

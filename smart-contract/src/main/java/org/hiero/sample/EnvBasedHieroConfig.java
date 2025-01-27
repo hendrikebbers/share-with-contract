@@ -1,3 +1,5 @@
+package org.hiero.sample;
+
 import com.hedera.hashgraph.sdk.AccountId;
 import com.hedera.hashgraph.sdk.PrivateKey;
 import com.openelements.hiero.base.config.ConsensusNode;
@@ -20,22 +22,25 @@ public class EnvBasedHieroConfig implements HieroConfig {
 
     private final Set<ConsensusNode> consensusNodes;
 
-    public EnvBasedHieroConfig() {
-        final Dotenv dotenv = Dotenv.load();
-        final String accountIdAsString = dotenv.get("hiero.accountId");
-        final String privateKeyAsString = dotenv.get("hiero.privateKey");
+    public EnvBasedHieroConfig(@NonNull final Dotenv dotenv) {
+        final String accountIdAsString = dotenv.get("OPERATOR_ACCOUNT_ID");
+        final String privateKeyAsString = dotenv.get("OPERATOR_PRIVATE_KEY");
         operatorAccount = Account.of(AccountId.fromString(accountIdAsString),
                 PrivateKey.fromString(privateKeyAsString));
-        networkName = dotenv.get("hiero.networkName");
-        final String mirrornodeAddress = dotenv.get("hiero.mirrornodeAddress");
+        networkName = dotenv.get("NETWORK_NAME");
+        final String mirrornodeAddress = dotenv.get("MIRROR_NODE_ADDRESS");
         mirrornodeAddresses = List.of(mirrornodeAddress);
 
-        final String consensusNodeIp = dotenv.get("hiero.consensusNodeIp");
-        final String consensusNodePort = dotenv.get("hiero.consensusNodePort");
-        final String consensusNodeAccount = dotenv.get("hiero.consensusNodeAccount");
+        final String consensusNodeIp = dotenv.get("CONSENSUS_NODE_IP");
+        final String consensusNodePort = dotenv.get("CONSENSUS_NODE_PORT");
+        final String consensusNodeAccount = dotenv.get("CONSENSUS_NODE_ACCOUNT_ID");
 
         final ConsensusNode consensusNode = new ConsensusNode(consensusNodeIp, consensusNodePort, consensusNodeAccount);
         consensusNodes = Set.of(consensusNode);
+    }
+
+    public EnvBasedHieroConfig() {
+        this(Dotenv.load());
     }
 
     @Override

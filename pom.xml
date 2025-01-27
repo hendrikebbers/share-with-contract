@@ -16,6 +16,7 @@
 
   <modules>
     <module>smart-contract</module>
+    <module>supplier-service</module>
   </modules>
 
 </project>
