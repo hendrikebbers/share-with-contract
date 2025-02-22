@@ -19,6 +19,10 @@ contract SimpleStorage {
 
     mapping(string => Data) data;
 
+    event HashAdded(string identifier_);
+    event HashVerified(string identifier_);
+    event MissingVerificationCountUpdated(uint count);
+
     constructor (address supplier_, address consumer_) {
         supplier = supplier_;
         consumer = consumer_;
@@ -33,6 +37,8 @@ contract SimpleStorage {
         d.hash = hash_;
         identifiers.push(identifier_);
         missingIdentifiers.push(identifier_);
+        emit HashAdded(identifier_);
+        emit MissingVerificationCountUpdated(missingIdentifiers.length);
     }
 
     function removeMissingIdentifierByIndex(uint _index) private {
@@ -65,6 +71,8 @@ contract SimpleStorage {
 
         uint256 index = getIndexOfMissingIdentifier(identifier_);
         removeMissingIdentifierByIndex(index);
+        emit HashVerified(identifier_);
+        emit MissingVerificationCountUpdated(missingIdentifiers.length);
     }
 
     function check(string memory identifier_, bytes32 hash_) public view returns (bool){
